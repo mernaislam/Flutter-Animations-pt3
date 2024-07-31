@@ -1,0 +1,1 @@
+const duration1Sec = Duration(seconds: 1);
