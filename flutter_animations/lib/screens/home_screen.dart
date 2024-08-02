@@ -13,7 +13,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late AnimationController _progressBarController;
+  late AnimationController _startScreenController;
   late Animation<AlignmentGeometry> _alignmentAnimation;
+  late Animation<AlignmentGeometry> _newAlignmentAnimation;
   late Animation<double> _opacityAnimation;
   late Animation<double> _progressBarAnimation;
   late Animation<double> _sizeAnimation;
@@ -26,6 +28,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
 
     _progressBarController = AnimationController(
+      vsync: this,
+      duration: duration1Sec,
+    );
+
+    _startScreenController = AnimationController(
       vsync: this,
       duration: duration1Sec,
     );
@@ -66,6 +73,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     ).animate(
       _animationController,
     );
+
+    _newAlignmentAnimation = Tween<AlignmentGeometry>(
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+    ).animate(
+      _startScreenController,
+    );
   }
 
   @override
@@ -90,26 +104,31 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          LogoAnimation(
-            alignmentAnimation: _alignmentAnimation,
-            opacityAnimation: _opacityAnimation,
+      body: Align(
+        alignment: Alignment.bottomCenter,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+           children: [
+              LogoAnimation(
+                alignmentAnimation: _alignmentAnimation,
+                opacityAnimation: _opacityAnimation,
+              ),
+              const SizedBox(
+                height: 150,
+              ),
+              ProgressBar(
+                progressBarAnimation: _progressBarAnimation,
+                sizeAnimation: _sizeAnimation,
+                slideAnimation: _slideAnimation,
+                animationController: _startScreenController,
+              ),
+              const SizedBox(
+                height: 150,
+              ),
+            ],
           ),
-          const SizedBox(
-            height: 150,
-          ),
-          ProgressBar(
-            progressBarAnimation: _progressBarAnimation,
-            sizeAnimation: _sizeAnimation,
-            slideAnimation: _slideAnimation,
-          ),
-          const SizedBox(
-            height: 150,
-          ),
-        ],
+        ),
       ),
     );
   }
