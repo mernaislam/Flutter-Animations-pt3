@@ -31,7 +31,6 @@ class LoginFormState extends State<LoginForm>
   }
 
   void startAnimation() {
-    print('anything here');
     _isVisible = true;
     widget.animationController.forward();
     setState(() {});

@@ -53,6 +53,7 @@ class _ProgressBarState extends State<ProgressBar>
   void _checkVisibility() {
     if (widget.progressBarAnimation.status == AnimationStatus.completed) {
       loginFormKey.currentState?.startAnimation();
+      skipAnimationKey.currentState?.startAnimation();
       setState(() {
         _slideAnimation = _newSlideAnimation;
         widget.animationController.forward();
