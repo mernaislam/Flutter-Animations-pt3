@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animations/constants.dart';
 
 class ProgressBar extends StatefulWidget {
   const ProgressBar({
@@ -19,7 +20,6 @@ class ProgressBar extends StatefulWidget {
 
 class _ProgressBarState extends State<ProgressBar>
     with TickerProviderStateMixin {
-  bool _isVisible = true;
   late Animation<double> _opacityAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<Offset> _newSlideAnimation;
@@ -36,8 +36,8 @@ class _ProgressBarState extends State<ProgressBar>
       widget.animationController,
     );
     _newSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, -20),
-      end: const Offset(0, 30),
+      begin: const Offset(0, 90),
+      end: const Offset(0, 130),
     ).animate(
       widget.animationController,
     );
@@ -51,9 +51,9 @@ class _ProgressBarState extends State<ProgressBar>
   }
 
   void _checkVisibility() {
-    if (widget.progressBarAnimation.value >= 200 && _isVisible) {
+    if (widget.progressBarAnimation.status == AnimationStatus.completed) {
+      loginFormKey.currentState?.startAnimation();
       setState(() {
-        _isVisible = false;
         _slideAnimation = _newSlideAnimation;
         widget.animationController.forward();
       });
