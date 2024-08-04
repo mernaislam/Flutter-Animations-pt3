@@ -4,14 +4,10 @@ import 'package:flutter_animations/constants.dart';
 class ProgressBar extends StatefulWidget {
   const ProgressBar({
     super.key,
-    required this.progressBarAnimation,
-    required this.sizeAnimation,
-    required this.slideAnimation,
+    required this.loadingController,
     required this.animationController,
   });
-  final Animation<double> progressBarAnimation;
-  final Animation<double> sizeAnimation;
-  final Animation<Offset> slideAnimation;
+  final AnimationController loadingController;
   final AnimationController animationController;
 
   @override
@@ -19,44 +15,82 @@ class ProgressBar extends StatefulWidget {
 }
 
 class _ProgressBarState extends State<ProgressBar>
-    with TickerProviderStateMixin {
-  late Animation<double> _opacityAnimation;
-  late Animation<Offset> _slideAnimation;
-  late Animation<Offset> _newSlideAnimation;
+    with SingleTickerProviderStateMixin {
 
-  @override
-  void initState() {
-    super.initState();
-    widget.progressBarAnimation.addListener(_checkVisibility);
-    
+  // animations
+  late Animation<double> _opacityAnimation;
+  late Animation<double> _loadingAnimation;
+  late Animation<double> _sizeAnimation;
+  late Animation<Offset> _upSlideAnimation;
+  late Animation<Offset> _downSlideAnimation;
+  // controllers
+  late AnimationController _startScreenController;
+
+  void initializeControllers(){
+    _startScreenController = AnimationController(
+      vsync: this,
+      duration: duration1Sec,
+    );
+  }
+
+  void initializeAnimations(){
+    _loadingAnimation = Tween<double>(
+      begin: 0,
+      end: 200,
+    ).animate(
+      widget.loadingController,
+    );
+
+    _sizeAnimation = Tween<double>(
+      begin: 0,
+      end: 200,
+    ).animate(
+      widget.animationController,
+    );
+
+    _upSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 100),
+      end: const Offset(0, 90),
+    ).animate(
+      widget.animationController,
+    );
+
     _opacityAnimation = Tween<double>(
       begin: 1,
       end: 0,
     ).animate(
-      widget.animationController,
+      _startScreenController,
     );
-    _newSlideAnimation = Tween<Offset>(
+
+    _downSlideAnimation = Tween<Offset>(
       begin: const Offset(0, 90),
       end: const Offset(0, 130),
     ).animate(
-      widget.animationController,
+      _startScreenController,
     );
-    _slideAnimation = widget.slideAnimation;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeControllers();
+    initializeAnimations();
+    _loadingAnimation.addListener(_checkVisibility);
   }
 
   @override
   void dispose() {
-    widget.progressBarAnimation.removeListener(_checkVisibility);
+    _loadingAnimation.removeListener(_checkVisibility);
     super.dispose();
   }
 
   void _checkVisibility() {
-    if (widget.progressBarAnimation.status == AnimationStatus.completed) {
+    if (_loadingAnimation.status == AnimationStatus.completed) {
       loginFormKey.currentState?.startAnimation();
       skipAnimationKey.currentState?.startAnimation();
       setState(() {
-        _slideAnimation = _newSlideAnimation;
-        widget.animationController.forward();
+        _upSlideAnimation = _downSlideAnimation;
+        _startScreenController.forward();
       });
     }
   }
@@ -65,27 +99,27 @@ class _ProgressBarState extends State<ProgressBar>
   Widget build(BuildContext context) {
     return Center(
       child: SlideTransition(
-        position: _slideAnimation,
+        position: _upSlideAnimation,
         child: FadeTransition(
           opacity: _opacityAnimation,
           child: Stack(
             children: [
               AnimatedBuilder(
-                animation: widget.sizeAnimation,
+                animation: _sizeAnimation,
                 builder: (context, child) {
                   return Container(
                     height: 3,
-                    width: widget.sizeAnimation.value,
+                    width: _sizeAnimation.value,
                     color: Colors.grey,
                   );
                 },
               ),
               AnimatedBuilder(
-                animation: widget.progressBarAnimation,
+                animation: _loadingAnimation,
                 builder: (context, child) {
                   return Container(
                     height: 3,
-                    width: widget.progressBarAnimation.value,
+                    width: _loadingAnimation.value,
                     color: Colors.pink,
                   );
                 },

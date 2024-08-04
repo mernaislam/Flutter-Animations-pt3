@@ -18,15 +18,21 @@ class LogoAnimationWithProgressBar extends StatefulWidget {
 
 class _LogoAnimationWithProgressBarState
     extends State<LogoAnimationWithProgressBar> with TickerProviderStateMixin {
+  // controllers
   late AnimationController _animationController;
-  late AnimationController _progressBarController;
-  late AnimationController _startScreenController;
+  late AnimationController _loadingController;
+  // animations
   late Animation<AlignmentGeometry> _alignmentAnimation;
   late Animation<double> _opacityAnimation;
-  late Animation<double> _progressBarAnimation;
-  late Animation<double> _sizeAnimation;
-  late Animation<Offset> _slideAnimation;
-  late Animation<Offset> _newSlideAnimation;
+  late Animation<Offset> _lastUpSlideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeControllers();
+    initializeAnimations();
+    _startAnimation();
+  }
 
   void initializeControllers() {
     _animationController = AnimationController(
@@ -34,23 +40,10 @@ class _LogoAnimationWithProgressBarState
       duration: duration1Sec,
     );
 
-    _progressBarController = AnimationController(
+    _loadingController = AnimationController(
       vsync: this,
       duration: duration1Sec,
     );
-
-    _startScreenController = AnimationController(
-      vsync: this,
-      duration: duration1Sec,
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    _progressBarController.dispose();
-    _startScreenController.dispose();
-    super.dispose();
   }
 
   void initializeAnimations() {
@@ -68,41 +61,12 @@ class _LogoAnimationWithProgressBarState
       _animationController,
     );
 
-    _progressBarAnimation = Tween<double>(
-      begin: 0,
-      end: 200,
-    ).animate(
-      _progressBarController,
-    );
-
-    _sizeAnimation = Tween<double>(
-      begin: 0,
-      end: 200,
-    ).animate(
-      _animationController,
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 100),
-      end: const Offset(0, 90),
-    ).animate(
-      _animationController,
-    );
-
-    _newSlideAnimation = Tween<Offset>(
+    _lastUpSlideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: const Offset(0, 0),
     ).animate(
       widget.animationController,
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initializeControllers();
-    initializeAnimations();
-    _startAnimation();
   }
 
   void _startAnimation() async {
@@ -112,13 +76,20 @@ class _LogoAnimationWithProgressBarState
         seconds: 2,
       ),
     );
-    _progressBarController.forward();
+    _loadingController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _loadingController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return SlideTransition(
-      position: _newSlideAnimation,
+      position: _lastUpSlideAnimation,
       child: AnimatedBuilder(
         animation: _alignmentAnimation,
         builder: (context, child) {
@@ -129,7 +100,7 @@ class _LogoAnimationWithProgressBarState
                 'assets/background.png',
                 height: 250,
                 width: double.infinity,
-                fit: BoxFit.fitWidth
+                fit: BoxFit.fitWidth,
               ),
               AnimatedOpacity(
                 duration: duration1Sec,
@@ -139,10 +110,8 @@ class _LogoAnimationWithProgressBarState
                 ),
               ),
               ProgressBar(
-                progressBarAnimation: _progressBarAnimation,
-                sizeAnimation: _sizeAnimation,
-                slideAnimation: _slideAnimation,
-                animationController: _startScreenController,
+                loadingController: _loadingController,
+                animationController: _animationController,
               ),
             ],
           );

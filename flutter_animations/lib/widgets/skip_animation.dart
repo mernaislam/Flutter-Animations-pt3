@@ -26,7 +26,7 @@ class SkipAnimationState extends State<SkipAnimation>
     ).animate(_animationController);
   }
 
-  void startAnimation(){
+  void startAnimation() {
     _animationController.forward();
   }
 
@@ -34,26 +34,29 @@ class SkipAnimationState extends State<SkipAnimation>
   Widget build(BuildContext context) {
     return SlideTransition(
       position: _slideAnimation,
-      child: const Row(
-        children: [
-          Text(
-            'Skip',
-            style: TextStyle(
-              fontSize: 17,
+      child: InkWell(
+        onTap: (){},
+        child: const Row(
+          children: [
+            Text(
+              'Skip',
+              style: TextStyle(
+                fontSize: 17,
+              ),
             ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Icon(
-            Icons.arrow_forward,
-            color: Colors.pink,
-            size: 20,
-          ),
-          SizedBox(
-            width: 20,
-          ),
-        ],
+            SizedBox(
+              width: 10,
+            ),
+            Icon(
+              Icons.arrow_forward,
+              color: Colors.pink,
+              size: 20,
+            ),
+            SizedBox(
+              width: 20,
+            ),
+          ],
+        ),
       ),
     );
   }
