@@ -11,13 +11,12 @@ class HomeScreenBody extends StatefulWidget {
 }
 
 class HomeScreenBodyState extends State<HomeScreenBody>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
+    with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+
+    afterLoadingController = AnimationController(
       vsync: this,
       duration: duration1Sec,
     );
@@ -25,7 +24,7 @@ class HomeScreenBodyState extends State<HomeScreenBody>
 
   @override
   void dispose() {
-    _animationController.dispose();
+    afterLoadingController.dispose();
     super.dispose();
   }
 
@@ -36,12 +35,9 @@ class HomeScreenBodyState extends State<HomeScreenBody>
       child: SingleChildScrollView(
         child: Column(
           children: [
-            LogoAnimationWithProgressBar(
-              animationController: _animationController,
-            ),
+            const LogoAnimationWithProgressBar(),
             LoginForm(
               key: loginFormKey,
-              animationController: _animationController,
             )
           ],
         ),

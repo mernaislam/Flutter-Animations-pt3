@@ -7,10 +7,8 @@ import 'package:flutter_animations/widgets/progress_bar.dart';
 class LogoAnimationWithProgressBar extends StatefulWidget {
   const LogoAnimationWithProgressBar({
     super.key,
-    required this.animationController,
   });
 
-  final AnimationController animationController;
   @override
   State<LogoAnimationWithProgressBar> createState() =>
       _LogoAnimationWithProgressBarState();
@@ -19,7 +17,7 @@ class LogoAnimationWithProgressBar extends StatefulWidget {
 class _LogoAnimationWithProgressBarState
     extends State<LogoAnimationWithProgressBar> with TickerProviderStateMixin {
   // controllers
-  late AnimationController _animationController;
+  late AnimationController _startingController;
   late AnimationController _loadingController;
   // animations
   late Animation<AlignmentGeometry> _alignmentAnimation;
@@ -35,7 +33,7 @@ class _LogoAnimationWithProgressBarState
   }
 
   void initializeControllers() {
-    _animationController = AnimationController(
+    _startingController = AnimationController(
       vsync: this,
       duration: duration1Sec,
     );
@@ -51,26 +49,26 @@ class _LogoAnimationWithProgressBarState
       begin: Alignment.bottomCenter,
       end: Alignment.center,
     ).animate(
-      _animationController,
+      _startingController,
     );
 
     _opacityAnimation = Tween<double>(
       begin: 0,
       end: 1,
     ).animate(
-      _animationController,
+      _startingController,
     );
 
     _lastUpSlideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: const Offset(0, 0),
     ).animate(
-      widget.animationController,
+      afterLoadingController,
     );
   }
 
   void _startAnimation() async {
-    _animationController.forward();
+    _startingController.forward();
     await Future.delayed(
       const Duration(
         seconds: 2,
@@ -81,7 +79,7 @@ class _LogoAnimationWithProgressBarState
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _startingController.dispose();
     _loadingController.dispose();
     super.dispose();
   }
@@ -111,7 +109,7 @@ class _LogoAnimationWithProgressBarState
               ),
               ProgressBar(
                 loadingController: _loadingController,
-                animationController: _animationController,
+                startingController: _startingController,
               ),
             ],
           );

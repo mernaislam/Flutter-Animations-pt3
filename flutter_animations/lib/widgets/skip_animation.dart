@@ -10,24 +10,15 @@ class SkipAnimation extends StatefulWidget {
 
 class SkipAnimationState extends State<SkipAnimation>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: duration1Sec,
-    );
     _slideAnimation = Tween<Offset>(
       begin: const Offset(1, 0),
       end: const Offset(0, 0),
-    ).animate(_animationController);
-  }
-
-  void startAnimation() {
-    _animationController.forward();
+    ).animate(afterLoadingController);
   }
 
   @override

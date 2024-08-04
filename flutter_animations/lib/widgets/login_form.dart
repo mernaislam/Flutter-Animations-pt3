@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animations/constants.dart';
 import 'dart:math' as math;
 
 import 'package:flutter_animations/widgets/custom_text_field.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({super.key, required this.animationController});
-
-  final AnimationController animationController;
+  const LoginForm({super.key});
 
   @override
   State<LoginForm> createState() => LoginFormState();
@@ -26,13 +25,12 @@ class LoginFormState extends State<LoginForm>
       begin: const Offset(0, 1),
       end: const Offset(0, 0),
     ).animate(
-      widget.animationController,
+      afterLoadingController,
     );
   }
 
   void startAnimation() {
     _isVisible = true;
-    widget.animationController.forward();
     setState(() {});
   }
 
